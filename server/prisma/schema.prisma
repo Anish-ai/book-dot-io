@@ -1,0 +1,104 @@
+// --------------------------
+// Prisma Config
+// --------------------------
+datasource db {
+  provider = "postgresql" // or "mysql", "sqlite", etc.
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// --------------------------
+// Enums
+// --------------------------
+
+enum BookingCategory {
+  EVENT
+  REGULAR
+  EXTRA
+  LABS
+}
+
+// --------------------------
+// Models
+// --------------------------
+
+// Building: building-id, floors
+model Building {
+  buildingId  Int          @id
+  floors      Int?
+  departments Department[]
+}
+
+// Department: dept-id, name, building-id
+model Department {
+  deptId      Int       @id
+  name        String
+  buildingId  Int
+  building    Building  @relation(fields: [buildingId], references: [buildingId])
+  admins      Admin[]
+  users       User[]
+}
+
+// Admin: admin-id, dept-id, password, email
+model Admin {
+  adminId     Int        @id
+  deptId      Int
+  password    String
+  email       String
+
+  department  Department @relation(fields: [deptId], references: [deptId])
+}
+
+// User: user-id, dept-id, password, email
+model User {
+  userId      Int        @id
+  deptId      Int
+  password    String
+  email       String
+
+  department  Department @relation(fields: [deptId], references: [deptId])
+  bookings    Booking[]
+}
+
+// Room: room-id, room name, type, capacity
+model Room {
+  roomId      Int        @id
+  roomName    String
+  type        String
+  capacity    Int
+
+  bookings    Booking[]
+  schedules   Schedule[]
+}
+
+// Booking: request-id, category, room-id, user-id, status, start date, end date, description
+model Booking {
+  requestId   Int             @id
+  category    BookingCategory
+  roomId      Int
+  userId      Int
+  status      String
+  startDate   DateTime
+  endDate     DateTime
+  description String?
+
+  room        Room            @relation(fields: [roomId], references: [roomId])
+  user        User            @relation(fields: [userId], references: [userId])
+  schedules   Schedule[]
+}
+
+// Schedule: request-id, start time, end time, room-id, day
+model Schedule {
+  id          Int       @id @default(autoincrement())
+  requestId   Int
+  startTime   DateTime
+  endTime     DateTime
+  roomId      Int
+  day         String
+
+  booking     Booking   @relation(fields: [requestId], references: [requestId])
+  room        Room      @relation(fields: [roomId], references: [roomId])
+}
