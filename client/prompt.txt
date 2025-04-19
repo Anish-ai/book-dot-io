@@ -800,4 +800,4 @@ select {
   @apply transition-colors duration-200 ease-in-out hover:bg-gray-100;
 }
 
-Now carefully review all the codes for the project I have given as reference and understand it thorougholy. Similarly, make [src/app/(admin)/admin/bookings/[id]/page.js] file with visually appealing UI with required features and keeping the structure consistent. Dont try to suggest/change anything. But you can add some styles/colors/themes to globals.css and make new components if required
+Now carefully review all the codes for the project I have given as reference and understand it thorougholy. Similarly, make [src/app/bookings/room/[roomId]/page.js] file with visually appealing UI with required features and keeping the structure consistent. Dont try to suggest/change anything. But you can add some styles/colors/themes to globals.css and make new components if required

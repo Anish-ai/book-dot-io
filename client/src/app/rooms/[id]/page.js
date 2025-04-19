@@ -4,9 +4,9 @@ import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 import { MapPinIcon, CalendarIcon, ClockIcon, BuildingOfficeIcon, UserGroupIcon } from '@heroicons/react/24/outline'
 import Link from 'next/link'
-import api from '@/utils/api'
-import LoadingSpinner from '@/components/ui/LoadingSpinner'
-import BookingTimeline from '@/components/bookings/BookingTimeline'
+import api from '@/app/utils/api'
+import LoadingSpinner from '@/app/components/ui/LoadingSpinner'
+import BookingTimeline from '@/app/components/bookings/BookingTimeline'
 
 export default function RoomDetails() {
   const { id } = useParams()
@@ -19,7 +19,7 @@ export default function RoomDetails() {
     const fetchData = async () => {
       try {
         const [roomRes, bookingsRes] = await Promise.all([
-          api.get(`/user/rooms/${id}`),
+          api.get(`/rooms/${id}`),
           api.get(`/bookings/room/${id}`)
         ])
         
