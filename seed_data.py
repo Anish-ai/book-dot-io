@@ -285,9 +285,9 @@ def run_all():
         return False
     finally:
         if 'cur' in locals():
-        cur.close()
+            cur.close()
         if 'conn' in locals():
-        conn.close()
+            conn.close()
             print("Database connection closed.")
 
 if __name__ == '__main__':

@@ -19,6 +19,22 @@ const getAllBookings = async (req, res) => {
   }
 };
 
+const getBookings = async (req, res) => {
+  try {
+    const bookings = await prisma.booking.findMany({
+      include: {
+        room: true,
+        schedules: true
+      }
+    });
+    
+    return res.status(200).json(bookings);
+  } catch (error) {
+    console.error('Error getting bookings:', error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
 const getBookingsByRoomId = async (req, res) => {
   try {
     const { roomId } = req.params;
@@ -100,6 +116,8 @@ const createBooking = async (req, res) => {
     const highestBooking = await prisma.booking.findFirst({
       orderBy: { requestId: 'desc' }
     });
+
+    console.log(highestBooking);
     
     const newRequestId = highestBooking ? highestBooking.requestId + 1 : 1;
     
@@ -131,27 +149,6 @@ const createBooking = async (req, res) => {
     return res.status(201).json(booking);
   } catch (error) {
     console.error('Error creating booking:', error);
-    return res.status(500).json({ error: 'Internal server error' });
-  }
-};
-
-// Admin Controllers
-const getAdminBookings = async (req, res) => {
-  try {
-    const deptId = req.user.deptId;
-    
-    // Get all bookings for rooms in admin's department
-    const bookings = await prisma.booking.findMany({
-      include: {
-        room: true,
-        user: true,
-        schedules: true
-      }
-    });
-    
-    return res.status(200).json(bookings);
-  } catch (error) {
-    console.error('Error getting admin bookings:', error);
     return res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -262,6 +259,36 @@ const deleteBooking = async (req, res) => {
   }
 };
 
+const getAdminBookings = async (req, res) => {
+  try {
+    const adminDeptId = req.user.deptId; // Get admin's department from token
+
+    // Fetch bookings where the associated user belongs to the admin's department
+    const bookings = await prisma.booking.findMany({
+      where: {
+        user: {
+          deptId: adminDeptId
+        }
+      },
+      include: {
+        room: true,
+        schedules: true,
+        user: {
+          select: {
+            userId: true,
+            email: true
+          }
+        }
+      }
+    });
+
+    return res.status(200).json(bookings);
+  } catch (error) {
+    console.error('Error fetching admin department bookings:', error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
 module.exports = {
   // Public
   getAllBookings,
@@ -277,5 +304,6 @@ module.exports = {
   getAdminBookingById,
   updateBookingStatus,
   updateBooking,
-  deleteBooking
+  deleteBooking,
+  getBookings,
 }; 

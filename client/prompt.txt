@@ -1,0 +1,803 @@
+// --------------------------
+// Prisma Config
+// --------------------------
+datasource db {
+  provider = "postgresql" // or "mysql", "sqlite", etc.
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// --------------------------
+// Enums
+// --------------------------
+
+enum BookingCategory {
+  EVENT
+  REGULAR
+  EXTRA
+  LABS
+}
+
+// --------------------------
+// Models
+// --------------------------
+
+// Building: building-id, floors
+model Building {
+  buildingId  Int          @id
+  floors      Int?
+  departments Department[]
+}
+
+// Department: dept-id, name, building-id
+model Department {
+  deptId      Int       @id
+  name        String
+  buildingId  Int
+  building    Building  @relation(fields: [buildingId], references: [buildingId])
+  admins      Admin[]
+  users       User[]
+}
+
+// Admin: admin-id, dept-id, password, email
+model Admin {
+  adminId     Int        @id
+  deptId      Int
+  password    String
+  email       String
+
+  department  Department @relation(fields: [deptId], references: [deptId])
+}
+
+// User: user-id, dept-id, password, email
+model User {
+  userId      Int        @id
+  deptId      Int
+  password    String
+  email       String
+
+  department  Department @relation(fields: [deptId], references: [deptId])
+  bookings    Booking[]
+}
+
+// Room: room-id, room name, type, capacity
+model Room {
+  roomId      Int        @id
+  roomName    String
+  type        String
+  capacity    Int
+  buildingId  Int      
+  building    Building  @relation(fields: [buildingId], references: [buildingId])
+  bookings    Booking[]
+  schedules   Schedule[]
+}
+
+// Booking: request-id, category, room-id, user-id, status, start date, end date, description
+model Booking {
+  requestId   Int             @id
+  category    BookingCategory
+  roomId      Int
+  userId      Int
+  status      String
+  startDate   DateTime
+  endDate     DateTime
+  description String?
+
+  room        Room            @relation(fields: [roomId], references: [roomId])
+  user        User            @relation(fields: [userId], references: [userId])
+  schedules   Schedule[]
+}
+
+// Schedule: request-id, start time, end time, room-id, day
+model Schedule {
+  id          Int       @id @default(autoincrement())
+  requestId   Int
+  startTime   DateTime
+  endTime     DateTime
+  roomId      Int
+  day         String
+
+  booking     Booking   @relation(fields: [requestId], references: [requestId])
+  room        Room      @relation(fields: [roomId], references: [roomId])
+}
+
+# ✅ *Auth Endpoints*
+### (Common login endpoint for both roles)
+
+| Method | Endpoint            | Description                        |
+|--------|---------------------|------------------------------------|
+| POST   | /auth/login       | Login for user/admin               |
+
+Login Response:
+json
+{
+  "token": "JWT_TOKEN",
+  "role": "user" | "admin",
+  "deptId": 1
+}
+
+
+---
+
+# 🌐 *Public Endpoints* (No Auth Required)
+
+| Method | Endpoint                    | Description                            |
+|--------|-----------------------------|----------------------------------------|
+| GET    | /rooms                    | List all rooms                         |
+| GET    | /rooms/:id                | View room details                      |
+| GET    | /bookings                 | View all *approved* bookings         |
+| GET    | /bookings/room/:roomId    | View approved bookings for a room      |
+| GET    | /buildings                | View list of buildings                 |
+| GET    | /departments              | View list of departments               |
+
+---
+
+# 👤 *User Endpoints* (Requires role: user)
+
+| Method | Endpoint                    | Description                              |
+|--------|-----------------------------|------------------------------------------|
+| GET    | /bookings/my              | View all bookings made by logged-in user |
+| GET    | /bookings/:id             | View a specific booking if it’s theirs   |
+| POST   | /bookings                 | Create a new booking request             |
+
+Booking request body:
+json
+{
+  "roomId": 12,
+  "category": "REGULAR",
+  "startDate": "2025-04-16T09:00:00Z",
+  "endDate": "2025-04-16T11:00:00Z",
+  "description": "Meeting",
+  "schedules": [
+    {
+      "startTime": "2025-04-16T09:00:00Z",
+      "endTime": "2025-04-16T11:00:00Z",
+      "day": "WEDNESDAY"
+    }
+  ]
+}
+
+
+---
+
+# 🛠 *Admin Endpoints* (Requires role: admin)
+
+> All admin actions are scoped to their *own department* (deptId from login)
+
+## 🗂 Department & Building Management
+| Method | Endpoint                 | Description                      |
+|--------|--------------------------|----------------------------------|
+| GET    | /admin/departments     | List all departments             |
+| POST   | /admin/departments     | Create a department              |
+| PUT    | /admin/departments/:id | Update department                |
+| DELETE | /admin/departments/:id | Delete department                |
+
+| Method | Endpoint              | Description                 |
+|--------|-----------------------|-----------------------------|
+| GET    | /admin/buildings    | List all buildings          |
+| POST   | /admin/buildings    | Create building             |
+| PUT    | /admin/buildings/:id| Update building             |
+| DELETE | /admin/buildings/:id| Delete building             |
+
+---
+
+## 🏢 Room Management
+
+| Method | Endpoint              | Description                 |
+|--------|-----------------------|-----------------------------|
+| GET    | /admin/rooms        | List all rooms              |
+| POST   | /admin/rooms        | Create a new room           |
+| PUT    | /admin/rooms/:id    | Update a room               |
+| DELETE | /admin/rooms/:id    | Delete a room               |
+
+---
+
+## 📅 Booking & Approval
+
+| Method | Endpoint                   | Description                              |
+|--------|----------------------------|------------------------------------------|
+| GET    | /admin/bookings          | View all bookings for admin’s department |
+| GET    | /admin/bookings/:id      | View specific booking                    |
+| PUT    | /admin/bookings/:id      | Edit booking                             |
+| DELETE | /admin/bookings/:id      | Delete/cancel booking                    |
+| PUT    | /admin/bookings/:id/status| Approve/reject booking                  |
+
+Approval payload:
+json
+{
+  "status": "APPROVED" | "REJECTED"
+}
+
+
+---
+
+## 🕒 Schedule Management
+
+| Method | Endpoint               | Description                  |
+|--------|------------------------|------------------------------|
+| POST   | /admin/schedules     | Create schedule for booking  |
+| PUT    | /admin/schedules/:id | Update schedule              |
+| DELETE | /admin/schedules/:id | Delete schedule              |
+
+---
+
+I have my backend already setup. Now I want a visually appealing frontend ith stunning modern UI designs. I have my project structure ready which I have attached. I want you to make pages as I tell you with continuing connecting to backend endpoints. I am using javascript and nextjs (not typescript) and tailwindcss.
+
+src/
+├── app/
+│   ├── (admin)/                      # Admin route group
+│   │   ├── layout.js                # Admin-specific layout
+│   │   └── admin/
+│   │       ├── bookings/
+│   │       │   ├── [id]/            
+│   │       │   │   └── page.js      # /admin/bookings/:id (View/Edit)
+│   │       │   └── page.js          # /admin/bookings (List)
+│   │       ├── buildings/
+│   │       │   └── page.js          # /admin/buildings (CRUD)
+│   │       ├── departments/
+│   │       │   └── page.js          # /admin/departments (CRUD)
+│   │       ├── rooms/
+│   │       │   └── page.js          # /admin/rooms (CRUD)
+│   │       └── schedules/
+│   │           └── page.js          # /admin/schedules
+│   ├── auth/
+│   │   └── login/
+│   │       └── page.js              # /auth/login
+│   ├── bookings/
+│   │   ├── my/
+│   │   │   └── page.js              # /bookings/my (User's bookings)
+│   │   ├── room/
+│   │   │   └── [roomId]/
+│   │   │       └── page.js          # /bookings/room/:roomId
+│   │   ├── [id]/
+│   │   │   └── page.js              # /bookings/:id
+│   │   └── page.js                  # /bookings (Create/List)
+│   ├── buildings/
+│   │   ├── [id]/
+│   │   │   └── page.js              # /buildings/:id
+│   │   └── page.js                  # /buildings (List)
+│   ├── departments/
+│   │   ├── [id]/
+│   │   │   └── page.js              # /departments/:id
+│   │   └── page.js                  # /departments (List)
+│   ├── rooms/
+│   │   ├── [id]/
+│   │   │   └── page.js              # /rooms/:id
+│   │   └── page.js                  # /rooms (List)
+│   ├── context/
+│   │   └── AuthProvider.js          # Auth context wrapper
+│   ├── layouts/
+│   │   ├── RootLayout.js            # Main layout
+│   │   └── DashboardLayout.js       # User dashboard layout
+│   ├── components/
+│   │   ├── auth/
+│   │   │   └── LoginForm.js
+│   │   ├── bookings/
+│   │   │   ├── BookingCard.js
+│   │   │   └── BookingForm.js
+│   │   ├── admin/
+│   │   │   ├── AdminTable.js
+│   │   │   └── DepartmentForm.js
+│   │   └── ui/                      # UI components (buttons, cards)
+│   │       ├── DatePicker.js
+│   │       └── RoomCard.js
+│   ├── utils/
+│   │   ├── api.js                   # Axios instance
+│   │   └── auth.js                  # Auth helpers
+│   ├── middleware.js                # Route protection
+│   ├── page.js                      # Homepage (/)
+│   └── globals.css                  # Global styles
+├── public/
+│   ├── images/                      # Static assets
+│   └── styles/                      # CSS modules
+└── package.json
+
+Here are few pre-made files for your help and context
+
+//utils/api.js
+import axios from 'axios';
+
+const api = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3000/api',
+});
+
+// Request interceptor to add auth token
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+// Response interceptor to handle 401 errors
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem('token');
+      window.location.href = '/auth/login';
+    }
+    return Promise.reject(error);
+  }
+);
+
+export default api;
+
+// src/utils/auth.js
+export const login = async (credentials) => {
+    try {
+      const response = await api.post('/auth/login', credentials);
+      localStorage.setItem('token', response.data.token);
+      localStorage.setItem('role', response.data.role);
+      localStorage.setItem('deptId', response.data.deptId);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  };
+  
+  export const logout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('role');
+    localStorage.removeItem('deptId');
+  };
+  
+  export const getAuthToken = () => localStorage.getItem('token');
+  export const getCurrentUser = () => ({
+    role: localStorage.getItem('role'),
+    deptId: parseInt(localStorage.getItem('deptId')),
+  });
+  
+  export const isAuthenticated = () => !!localStorage.getItem('token');
+
+// src/middleware.js
+import { NextResponse } from 'next/server';
+import { isAuthenticated } from '@/utils/auth';
+
+export function middleware(request) {
+  const { pathname } = request.nextUrl;
+  
+  // Protect admin routes
+  if (pathname.startsWith('/admin')) {
+    const role = localStorage.getItem('role');
+    if (!isAuthenticated() || role !== 'admin') {
+      return NextResponse.redirect(new URL('/auth/login', request.url));
+    }
+  }
+
+  // Protect user routes
+  if (pathname.startsWith('/bookings')) {
+    if (!isAuthenticated()) {
+      return NextResponse.redirect(new URL('/auth/login', request.url));
+    }
+  }
+
+  return NextResponse.next();
+}
+
+// src/components/ui/RoomCard.js
+import { MapPinIcon, UserGroupIcon, CalendarIcon } from '@heroicons/react/24/outline';
+import Link from 'next/link';
+
+export default function RoomCard({ room, bookings }) {
+  return (
+    <div className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+      <div className="p-6">
+        <div className="flex justify-between items-start mb-4">
+          <div>
+            <h3 className="text-xl font-semibold">{room.roomName}</h3>
+            <p className="text-gray-600">Type: {room.type}</p>
+          </div>
+          <span className="bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full">
+            #{room.roomId}
+          </span>
+        </div>
+        
+        <div className="space-y-2 text-sm">
+          <div className="flex items-center text-gray-600">
+            <UserGroupIcon className="h-5 w-5 mr-2" />
+            Capacity: {room.capacity} people
+          </div>
+          <div className="flex items-center text-gray-600">
+            <CalendarIcon className="h-5 w-5 mr-2" />
+            Bookings: {bookings.length} scheduled
+          </div>
+        </div>
+
+        <div className="mt-4 flex justify-between items-center">
+          <Link 
+            href={`/rooms/${room.roomId}`}
+            className="text-blue-600 hover:text-blue-700 font-medium flex items-center"
+          >
+            View Details
+            <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </Link>
+          <Link 
+            href={`/bookings/room/${room.roomId}`}
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Book Now
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// src/app/page.js
+"use client"
+
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import api from '@/utils/api';
+import { useAuth } from '@/context/AuthProvider';
+import { BuildingOfficeIcon, CalendarDaysIcon, MapPinIcon, ClockIcon } from '@heroicons/react/24/outline';
+import RoomCard from '@/components/ui/RoomCard';
+import LoadingSpinner from '@/components/ui/LoadingSpinner';
+
+export default function HomePage() {
+  const { isAuthenticated } = useAuth();
+  const [buildings, setBuildings] = useState([]);
+  const [rooms, setRooms] = useState([]);
+  const [bookings, setBookings] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [buildingsRes, roomsRes, bookingsRes] = await Promise.all([
+          api.get('/buildings'),
+          api.get('/rooms'),
+          api.get('/bookings')
+        ]);
+        
+        setBuildings(buildingsRes.data);
+        setRooms(roomsRes.data);
+        setBookings(bookingsRes.data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <LoadingSpinner className="h-12 w-12 text-blue-600" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Hero Section */}
+      <div className="relative bg-gradient-to-r from-blue-600 to-blue-500 text-white py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <h1 className="text-4xl font-bold sm:text-5xl md:text-6xl mb-6">
+              Welcome to Smart Campus
+            </h1>
+            <p className="text-xl mb-8">
+              Book rooms, manage schedules, and explore campus facilities
+            </p>
+            {!isAuthenticated && (
+              <div className="flex gap-4 justify-center">
+                <Link href="/auth/login" className="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-opacity-90 transition-all">
+                  Sign In
+                </Link>
+                <Link href="/auth/register" className="border-2 border-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition-all">
+                  Register
+                </Link>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Campus Highlights */}
+      <section className="py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl font-bold mb-8 flex items-center gap-2">
+            <BuildingOfficeIcon className="h-8 w-8 text-blue-600" />
+            Campus Buildings
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {buildings.map((building) => (
+              <Link 
+                key={building.buildingId} 
+                href={`/buildings/${building.buildingId}`}
+                className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow"
+              >
+                <div className="p-6">
+                  <h3 className="text-xl font-semibold mb-2">Building {building.buildingId}</h3>
+                  <div className="flex items-center text-gray-600">
+                    <MapPinIcon className="h-5 w-5 mr-2" />
+                    <span>{building.floors} Floors</span>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Available Rooms */}
+      <section className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl font-bold mb-8 flex items-center gap-2">
+            <BuildingOfficeIcon className="h-8 w-8 text-blue-600" />
+            Available Rooms
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {rooms.map((room) => (
+              <RoomCard 
+                key={room.roomId}
+                room={room}
+                bookings={bookings.filter(b => b.roomId === room.roomId)}
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Upcoming Events */}
+      <section className="py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl font-bold mb-8 flex items-center gap-2">
+            <CalendarDaysIcon className="h-8 w-8 text-blue-600" />
+            Upcoming Events
+          </h2>
+          <div className="space-y-4">
+            {bookings.slice(0, 5).map((booking) => (
+              <div 
+                key={booking.requestId}
+                className="bg-white p-6 rounded-lg shadow-sm border-l-4 border-blue-600 hover:shadow-md transition-shadow"
+              >
+                <div className="flex justify-between items-start">
+                  <div>
+                    <h3 className="text-lg font-semibold">{booking.description}</h3>
+                    <p className="text-gray-600">{booking.category}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm text-gray-500">
+                      <ClockIcon className="h-4 w-4 inline-block mr-1" />
+                      {new Date(booking.startDate).toLocaleDateString()} - {' '}
+                      {new Date(booking.endDate).toLocaleTimeString()}
+                    </p>
+                    <span className="inline-block px-2 py-1 text-sm bg-blue-100 text-blue-800 rounded-full">
+                      Room {booking.roomId}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="mt-8 text-center">
+            <Link 
+              href="/bookings" 
+              className="text-blue-600 hover:text-blue-700 font-semibold inline-flex items-center"
+            >
+              View All Bookings
+              <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </Link>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+// src/app/layout.js
+import { Geist, Geist_Mono } from "next/font/google";
+import "./globals.css";
+import { AuthProvider } from "@/context/AuthProvider";
+
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
+
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
+
+export const metadata = {
+  title: "Create Next App",
+  description: "Generated by create next app",
+};
+
+export default function RootLayout({ children }) {
+  return (
+    <html lang="en">
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      >
+        <AuthProvider>{children}</AuthProvider>
+      </body>
+    </html>
+  );
+}
+
+// src/app/globals.css
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Custom transitions */
+.transition-shadow {
+  @apply transition-shadow duration-300 ease-in-out;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-gray-100;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-blue-500 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-blue-600;
+}
+
+/* Gradient text */
+.gradient-text {
+  background: linear-gradient(45deg, #2563eb, #3b82f6);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Custom select arrow */
+select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+/* Smooth transitions */
+.smooth-transition {
+  @apply transition-all duration-300 ease-in-out;
+}
+
+/* Custom checkbox */
+.custom-checkbox:checked {
+  background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e");
+}
+
+/* Custom form elements */
+input[type="datetime-local"], 
+input[type="time"],
+select {
+  @apply w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all;
+}
+
+/* Status badges */
+.status-badge {
+  @apply px-2 py-1 text-sm rounded-full;
+}
+.status-approved {
+  @apply bg-green-100 text-green-800;
+}
+.status-pending {
+  @apply bg-yellow-100 text-yellow-800;
+}
+.status-rejected {
+  @apply bg-red-100 text-red-800;
+}
+
+/* Form error messages */
+.form-error {
+  @apply text-sm text-red-600 mt-1 flex items-center gap-1;
+}
+
+/* Schedule item hover effect */
+.schedule-item:hover {
+  @apply bg-gray-100;
+}
+
+
+
+/* Calendar grid */
+.calendar-grid {
+  @apply grid grid-cols-1 md:grid-cols-7 gap-2;
+}
+
+/* Time slot visualization */
+.time-slot {
+  @apply relative h-2 bg-blue-100 rounded-full overflow-hidden;
+}
+
+.time-slot::after {
+  @apply absolute inset-0 bg-blue-500;
+  content: '';
+  width: calc((var(--end) - var(--start)) * 100%);
+  left: calc(var(--start) * 100%);
+}
+
+/* Booking status indicators */
+.booking-status {
+  @apply px-2 py-1 rounded-full text-xs font-medium;
+}
+.booking-status-approved {
+  @apply bg-green-100 text-green-800;
+}
+.booking-status-pending {
+  @apply bg-yellow-100 text-yellow-800;
+}
+
+/* Booking status indicators */
+.status-badge {
+  @apply px-3 py-1 text-sm rounded-full font-medium inline-flex items-center;
+}
+
+.status-approved {
+  @apply bg-green-100 text-green-800;
+}
+
+.status-pending {
+  @apply bg-yellow-100 text-yellow-800;
+}
+
+.status-rejected {
+  @apply bg-red-100 text-red-800;
+}
+
+/* Detail page specific styles */
+.booking-detail-card {
+  @apply bg-white rounded-xl shadow-md overflow-hidden transition-all;
+}
+
+.booking-detail-section {
+  @apply p-6 border-b border-gray-200 last:border-b-0;
+}
+
+.schedule-item {
+  @apply transition-colors duration-200 ease-in-out hover:bg-gray-100;
+}
+
+Now carefully review all the codes for the project I have given as reference and understand it thorougholy. Similarly, make [src/app/(admin)/admin/bookings/[id]/page.js] file with visually appealing UI with required features and keeping the structure consistent. Dont try to suggest/change anything. But you can add some styles/colors/themes to globals.css and make new components if required

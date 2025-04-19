@@ -5,7 +5,9 @@ const morgan = require('morgan');
 // const helmet = require('helmet');
 // const compression = require('compression');
 // const rateLimit = require('express-rate-limit');
+const adminRoutes = require('./routes/admin');
 const routes = require('./routes');
+const userRoutes = require('./routes/user');
 const { PrismaClient } = require('@prisma/client');
 
 // Initialize Prisma
@@ -36,7 +38,9 @@ app.use(morgan('dev')); // Logging
 // app.use('/api', apiLimiter);
 
 // API routes
+app.use('/api/admin', adminRoutes);
 app.use('/api', routes);
+app.use('/api/user', userRoutes);
 
 // Health check route
 app.get('/health', (req, res) => {

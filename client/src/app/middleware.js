@@ -1,6 +1,6 @@
 // src/middleware.js
 import { NextResponse } from 'next/server';
-import { isAuthenticated } from '@/utils/auth';
+import { isAuthenticated } from '@/app/utils/auth';
 
 export function middleware(request) {
   const { pathname } = request.nextUrl;

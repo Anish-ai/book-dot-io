@@ -36,35 +36,70 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
 
 src/
-├── components/
-│   └── Layout.js
-├── contexts/
-│   └── AuthContext.js
 ├── app/
-│   ├── page.js
-│   ├── api/
-│   │   └── login.js
-│   ├── admin/
-│   │   ├── bookings/
-│   │   │   └── [id].js
-│   │   ├── buildings/
-│   │   │   └── index.js
-│   │   ├── departments/
-│   │   │   └── index.js
-│   │   ├── rooms/
-│   │   │   └── index.js
-│   │   └── schedules/
-│   │       └── index.js
+│   ├── (admin)/                      # Admin route group
+│   │   ├── layout.js                # Admin-specific layout
+│   │   └── admin/
+│   │       ├── bookings/
+│   │       │   ├── [id]/            
+│   │       │   │   └── page.js      # /admin/bookings/:id (View/Edit)
+│   │       │   └── page.js          # /admin/bookings (List)
+│   │       ├── buildings/
+│   │       │   └── page.js          # /admin/buildings (CRUD)
+│   │       ├── departments/
+│   │       │   └── page.js          # /admin/departments (CRUD)
+│   │       ├── rooms/
+│   │       │   └── page.js          # /admin/rooms (CRUD)
+│   │       └── schedules/
+│   │           └── page.js          # /admin/schedules
+│   ├── auth/
+│   │   └── login/
+│   │       └── page.js              # /auth/login
 │   ├── bookings/
-│   │   ├── [id].js
-│   │   ├── index.js
-│   │   └── my.js
+│   │   ├── my/
+│   │   │   └── page.js              # /bookings/my (User's bookings)
+│   │   ├── room/
+│   │   │   └── [roomId]/
+│   │   │       └── page.js          # /bookings/room/:roomId
+│   │   ├── [id]/
+│   │   │   └── page.js              # /bookings/:id
+│   │   └── page.js                  # /bookings (Create/List)
 │   ├── buildings/
-│   │   └── [id].js
+│   │   ├── [id]/
+│   │   │   └── page.js              # /buildings/:id
+│   │   └── page.js                  # /buildings (List)
 │   ├── departments/
-│   │   └── [id].js
-│   ├── login.js
-│   └── rooms/
-│       └── [id].js
-└── utils/
-    └── api.js
+│   │   ├── [id]/
+│   │   │   └── page.js              # /departments/:id
+│   │   └── page.js                  # /departments (List)
+│   ├── rooms/
+│   │   ├── [id]/
+│   │   │   └── page.js              # /rooms/:id
+│   │   └── page.js                  # /rooms (List)
+│   ├── context/
+│   │   └── AuthProvider.js          # Auth context wrapper
+│   ├── layouts/
+│   │   ├── RootLayout.js            # Main layout
+│   │   └── DashboardLayout.js       # User dashboard layout
+│   ├── components/
+│   │   ├── auth/
+│   │   │   └── LoginForm.js
+│   │   ├── bookings/
+│   │   │   ├── BookingCard.js
+│   │   │   └── BookingForm.js
+│   │   ├── admin/
+│   │   │   ├── AdminTable.js
+│   │   │   └── DepartmentForm.js
+│   │   └── ui/                      # UI components (buttons, cards)
+│   │       ├── DatePicker.js
+│   │       └── RoomCard.js
+│   ├── utils/
+│   │   ├── api.js                   # Axios instance
+│   │   └── auth.js                  # Auth helpers
+│   ├── middleware.js                # Route protection
+│   ├── page.js                      # Homepage (/)
+│   └── globals.css                  # Global styles
+├── public/
+│   ├── images/                      # Static assets
+│   └── styles/                      # CSS modules
+└── package.json

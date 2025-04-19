@@ -69,8 +69,66 @@ const deleteSchedule = async (req, res) => {
   }
 };
 
+// get schedule
+const getSchedule = async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const schedule = await prisma.schedule.findUnique({
+      where: { id: parseInt(id) }
+    });
+    
+    if (!schedule) {
+      return res.status(404).json({ error: 'Schedule not found' });
+    }
+    
+    return res.status(200).json(schedule);
+  } catch (error) {
+    console.error('Error fetching schedule:', error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+};
+// get all schedules
+const getAllSchedules = async (req, res) => {
+  try {
+    const schedules = await prisma.schedule.findMany({
+      include: {
+        booking: true,
+        room: true
+      }
+    });
+    
+    return res.status(200).json(schedules);
+  } catch (error) {
+    console.error('Error fetching schedules:', error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+};
+// get schedules by booking id
+const getSchedulesByBookingId = async (req, res) => {
+  try {
+    const { bookingId } = req.params;
+    
+    const schedules = await prisma.schedule.findMany({
+      where: { requestId: parseInt(bookingId) },
+      include: {
+        booking: true,
+        room: true
+      }
+    });
+    
+    return res.status(200).json(schedules);
+  } catch (error) {
+    console.error('Error fetching schedules:', error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
 module.exports = {
   createSchedule,
   updateSchedule,
-  deleteSchedule
-}; 
+  deleteSchedule,
+  getSchedule,
+  getAllSchedules,
+  getSchedulesByBookingId,
+};

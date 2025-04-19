@@ -3,11 +3,11 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import api from '@/utils/api';
-import { useAuth } from '@/context/AuthProvider';
+import api from '@/app/utils/api';
+import { useAuth } from '@/app/context/AuthProvider';
 import { BuildingOfficeIcon, CalendarDaysIcon, MapPinIcon, ClockIcon } from '@heroicons/react/24/outline';
-import RoomCard from '@/components/ui/RoomCard';
-import LoadingSpinner from '@/components/ui/LoadingSpinner';
+import RoomCard from '@/app/components/ui/RoomCard';
+import LoadingSpinner from '@/app/components/ui/LoadingSpinner';
 
 export default function HomePage() {
   const { isAuthenticated } = useAuth();

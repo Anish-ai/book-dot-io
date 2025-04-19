@@ -1,7 +1,7 @@
 const express = require('express');
 const { body } = require('express-validator');
 const { createRoom, updateRoom, deleteRoom } = require('../controllers/roomController');
-const { getAdminBookings, getAdminBookingById, updateBooking, deleteBooking, updateBookingStatus } = require('../controllers/bookingController');
+const { getAdminBookings, getAdminBookingById, updateBooking, deleteBooking, updateBookingStatus, getBookings } = require('../controllers/bookingController');
 const { createDepartment, updateDepartment, deleteDepartment } = require('../controllers/departmentController');
 const { createBuilding, updateBuilding, deleteBuilding } = require('../controllers/buildingController');
 const { createSchedule, updateSchedule, deleteSchedule } = require('../controllers/scheduleController');
@@ -79,6 +79,7 @@ router.delete('/rooms/:id', deleteRoom);
  */
 router.get('/bookings', getAdminBookings);
 router.get('/bookings/:id', getAdminBookingById);
+router.get('/allBookings', getBookings);
 router.put('/bookings/:id', 
   validate([
     body('category').optional().isIn(['EVENT', 'REGULAR', 'EXTRA', 'LABS']).withMessage('Invalid booking category'),
@@ -119,4 +120,4 @@ router.put('/schedules/:id',
 );
 router.delete('/schedules/:id', deleteSchedule);
 
-module.exports = router; 
+module.exports = router;

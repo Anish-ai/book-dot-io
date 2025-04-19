@@ -1,7 +1,12 @@
 // src/utils/auth.js
+
+import api from "@/app/utils/api";
+
 export const login = async (credentials) => {
     try {
+      console.log('Logging in with credentials:', credentials);
       const response = await api.post('/auth/login', credentials);
+      console.log('Login response:', response.data);
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('role', response.data.role);
       localStorage.setItem('deptId', response.data.deptId);

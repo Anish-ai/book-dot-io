@@ -1,6 +1,7 @@
 const express = require('express');
 const { body } = require('express-validator');
 const { getUserBookings, getUserBookingById, createBooking } = require('../controllers/bookingController');
+const { createSchedule, updateSchedule, deleteSchedule } = require('../controllers/scheduleController');
 const { validate } = require('../middleware/validation');
 const { authenticate, authorize } = require('../middleware/auth');
 
@@ -29,6 +30,17 @@ router.post('/bookings',
     body('schedules.*.day').isString().withMessage('Day must be a string')
   ]),
   createBooking
+);
+
+router.post('/schedules', 
+  validate([
+    body('requestId').isInt().withMessage('Request ID must be an integer'),
+    body('startTime').isISO8601().withMessage('Start time must be a valid date'),
+    body('endTime').isISO8601().withMessage('End time must be a valid date'),
+    body('roomId').isInt().withMessage('Room ID must be an integer'),
+    body('day').isString().withMessage('Day must be a string')
+  ]),
+  createSchedule
 );
 
 module.exports = router; 

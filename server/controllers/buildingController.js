@@ -12,6 +12,26 @@ const getAllBuildings = async (req, res) => {
   }
 };
 
+// Get buildings by id
+const getBuildingById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const building = await prisma.building.findUnique({
+      where: { buildingId: parseInt(id) }
+    });
+    
+    if (!building) {
+      return res.status(404).json({ error: 'Building not found' });
+    }
+    
+    return res.status(200).json(building);
+  } catch (error) {
+    console.error('Error getting building:', error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
 // Admin Controllers
 const createBuilding = async (req, res) => {
   try {

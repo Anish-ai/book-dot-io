@@ -28,11 +28,19 @@ const authorize = (roles = []) => {
   if (typeof roles === 'string') {
     roles = [roles];
   }
+
+  console.log('Authorization roles:', roles);
   
   return (req, res, next) => {
     if (!req.user) {
       return res.status(401).json({ error: 'Unauthorized - Authentication required' });
     }
+
+    // console the required and user roles for debugging
+    console.log('req.user.role', req.user.role)
+    console.log('req.user', req.user)
+
+    console.log('roles.includes', roles, roles.includes(req.user.role))
     
     if (roles.length && !roles.includes(req.user.role)) {
       return res.status(403).json({ error: 'Forbidden - Insufficient permissions' });

@@ -1,7 +1,18 @@
 {
   "compilerOptions": {
+    "baseUrl": "./src",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["*"],
+      "@app/*": ["app/*"],
+      "@components/*": ["app/components/*"],
+      "@components/ui/*": ["app/components/ui/*"],
+      "@components/bookings/*": ["app/components/bookings/*"],
+      "@layouts/*": ["app/layouts/*"],
+      "@utils/*": ["app/utils/*"],
+      "@context/*": ["app/context/*"],
+      "@pages/*": ["app/*"], 
+      "@services/*": ["app/services/*"],  // if services folder is added later
+      "@assets/*": ["../public/*"]         // maps to /public for static files like images/styles
     }
   }
 }
