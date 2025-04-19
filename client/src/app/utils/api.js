@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3000/api',
+  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || 'http://10.16.3.233:5001/api',
 });
 
 // Request interceptor to add auth token

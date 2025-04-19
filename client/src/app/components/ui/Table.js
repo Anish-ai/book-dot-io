@@ -16,12 +16,12 @@ export function Table({ children, className = '' }) {
   }
   
   export function Tbody({ children }) {
-    return <tbody className="divide-y divide-gray-200">{children}</tbody>;
+    return <tbody className="divide-y divide-[var(--border)]">{children}</tbody>;
   }
   
   export function Tr({ children, className = '', ...props }) {
     return (
-      <tr className={className} {...props}>
+      <tr className={`table-row-hover ${className}`} {...props}>
         {children}
       </tr>
     );
@@ -30,7 +30,7 @@ export function Table({ children, className = '' }) {
   export function Th({ children, className = '', ...props }) {
     return (
       <th
-        className={`px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider ${className}`}
+        className={`table-header-cell ${className}`}
         {...props}
       >
         {children}
@@ -41,7 +41,7 @@ export function Table({ children, className = '' }) {
   export function Td({ children, className = '', ...props }) {
     return (
       <td
-        className={`px-6 py-4 whitespace-nowrap ${className}`}
+        className={`table-cell ${className}`}
         {...props}
       >
         {children}

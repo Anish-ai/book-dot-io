@@ -60,13 +60,13 @@ export default function BookingForm({ onSubmit, onCancel }) {
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-[var(--foreground)] mb-1">
             Room ID
           </label>
           <input
             type="number"
             required
-            className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+            className="w-full p-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-[var(--primary)]"
             value={formData.roomId}
             onChange={(e) =>
               setFormData({ ...formData, roomId: e.target.value })
@@ -75,11 +75,11 @@ export default function BookingForm({ onSubmit, onCancel }) {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-[var(--foreground)] mb-1">
             Category
           </label>
           <select
-            className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+            className="w-full p-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-[var(--primary)]"
             value={formData.category}
             onChange={(e) =>
               setFormData({ ...formData, category: e.target.value })
@@ -95,13 +95,12 @@ export default function BookingForm({ onSubmit, onCancel }) {
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-[var(--foreground)] mb-1">
               Start Date
             </label>
             <input
               type="datetime-local"
               required
-              className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
               value={formData.startDate}
               onChange={(e) =>
                 setFormData({ ...formData, startDate: e.target.value })
@@ -109,13 +108,12 @@ export default function BookingForm({ onSubmit, onCancel }) {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-[var(--foreground)] mb-1">
               End Date
             </label>
             <input
               type="datetime-local"
               required
-              className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
               value={formData.endDate}
               onChange={(e) =>
                 setFormData({ ...formData, endDate: e.target.value })
@@ -125,11 +123,11 @@ export default function BookingForm({ onSubmit, onCancel }) {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-[var(--foreground)] mb-1">
             Description
           </label>
           <textarea
-            className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+            className="w-full p-2 border border-[var(--border)] bg-[var(--card)] rounded-lg focus:ring-2 focus:ring-[var(--primary)]"
             value={formData.description}
             onChange={(e) =>
               setFormData({ ...formData, description: e.target.value })
@@ -137,13 +135,13 @@ export default function BookingForm({ onSubmit, onCancel }) {
           />
         </div>
 
-        <div className="border-t pt-4">
+        <div className="border-t border-[var(--border)] pt-4">
           <div className="flex justify-between items-center mb-4">
             <h3 className="font-medium">Schedules</h3>
             <button
               type="button"
               onClick={addSchedule}
-              className="text-blue-600 hover:text-blue-700 flex items-center gap-1"
+              className="text-[var(--primary)] hover:text-[var(--primary-hover)] flex items-center gap-1"
             >
               <PlusCircleIcon className="h-5 w-5" />
               Add Schedule
@@ -153,17 +151,16 @@ export default function BookingForm({ onSubmit, onCancel }) {
           {formData.schedules.map((schedule, index) => (
             <div
               key={index}
-              className="space-y-4 mb-4 p-4 bg-gray-50 rounded-lg"
+              className="space-y-4 mb-4 p-4 bg-[var(--card-hover)] rounded-lg"
             >
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-[var(--foreground)] mb-1">
                     Start Time
                   </label>
                   <input
                     type="time"
                     required
-                    className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                     value={schedule.startTime}
                     onChange={(e) =>
                       updateSchedule(index, "startTime", e.target.value)
@@ -171,13 +168,12 @@ export default function BookingForm({ onSubmit, onCancel }) {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-[var(--foreground)] mb-1">
                     End Time
                   </label>
                   <input
                     type="time"
                     required
-                    className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                     value={schedule.endTime}
                     onChange={(e) =>
                       updateSchedule(index, "endTime", e.target.value)
@@ -187,11 +183,10 @@ export default function BookingForm({ onSubmit, onCancel }) {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-[var(--foreground)] mb-1">
                   Day
                 </label>
                 <select
-                  className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                   value={schedule.day}
                   onChange={(e) => updateSchedule(index, "day", e.target.value)}
                 >
@@ -219,13 +214,13 @@ export default function BookingForm({ onSubmit, onCancel }) {
         <button
           type="button"
           onClick={onCancel}
-          className="px-4 py-2 border rounded-lg hover:bg-gray-50"
+          className="btn-secondary"
         >
           Cancel
         </button>
         <button
           type="submit"
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+          className="btn-primary"
         >
           Submit Booking
         </button>

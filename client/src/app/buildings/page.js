@@ -31,7 +31,7 @@ export default function BuildingsPage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <LoadingSpinner className="h-12 w-12 text-blue-600" />
+        <LoadingSpinner className="h-12 w-12 text-[var(--primary)]" />
       </div>
     );
   }
@@ -39,15 +39,15 @@ export default function BuildingsPage() {
   if (error) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-red-600 bg-red-100 p-4 rounded-lg">{error}</div>
+        <div className="bg-[var(--error-bg)] text-[var(--error)] p-4 rounded-lg">{error}</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[var(--background)]">
       {/* Hero Section */}
-      <div className="relative bg-gradient-to-r from-blue-600 to-blue-500 text-white py-20">
+      <div className="relative bg-gradient-to-r from-[var(--primary)] to-[var(--accent)] text-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <h1 className="text-4xl font-bold sm:text-5xl md:text-6xl mb-6 flex items-center justify-center gap-4">
@@ -69,27 +69,27 @@ export default function BuildingsPage() {
               <Link
                 key={building.buildingId}
                 href={`/buildings/${building.buildingId}`}
-                className="group bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow"
+                className="group hover-card"
               >
                 <div className="p-6">
                   <div className="flex items-center justify-between mb-4">
                     <div>
                       <h3 className="text-xl font-semibold">Building #{building.buildingId}</h3>
-                      <p className="text-gray-600">{building.floors || 'N/A'} Floors</p>
+                      <p className="text-[var(--muted)]">{building.floors || 'N/A'} Floors</p>
                     </div>
-                    <div className="bg-blue-100 p-3 rounded-full group-hover:bg-blue-200 transition-colors">
-                      <BuildingOfficeIcon className="h-8 w-8 text-blue-600" />
+                    <div className="bg-[var(--primary-hover)/10] p-3 rounded-full group-hover:bg-[var(--primary-hover)/20] transition-colors">
+                      <BuildingOfficeIcon className="h-8 w-8 text-[var(--primary)]" />
                     </div>
                   </div>
 
-                  <div className="flex items-center text-gray-600">
+                  <div className="flex items-center text-[var(--muted)]">
                     <MapPinIcon className="h-5 w-5 mr-2" />
                     <span className="text-sm">Rooms: {building.rooms?.length || '0'}</span>
                   </div>
 
                   <div className="mt-4 flex items-center justify-between text-sm">
-                    <span className="text-blue-600 font-medium">View Details →</span>
-                    <div className="text-gray-500">
+                    <span className="text-[var(--primary)] font-medium">View Details →</span>
+                    <div className="text-[var(--muted)]">
                       {building.departments?.length || '0'} Departments
                     </div>
                   </div>
@@ -100,7 +100,7 @@ export default function BuildingsPage() {
 
           {buildings.length === 0 && !loading && (
             <div className="text-center py-12">
-              <p className="text-gray-600">No buildings found</p>
+              <p className="text-[var(--muted)]">No buildings found</p>
             </div>
           )}
         </div>

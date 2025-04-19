@@ -1,9 +1,9 @@
 // src/components/ui/Button.js
 export default function Button({ children, className, variant = 'primary', ...props }) {
   const variants = {
-    primary: 'bg-blue-600 text-white hover:bg-blue-700',
-    secondary: 'bg-gray-200 text-gray-700 hover:bg-gray-300',
-    danger: 'bg-red-600 text-white hover:bg-red-700'
+    primary: 'btn-primary',
+    secondary: 'btn-secondary',
+    danger: 'bg-[var(--error)] text-white hover:bg-[var(--error-light)]'
   }
 
   return (

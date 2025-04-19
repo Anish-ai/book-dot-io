@@ -44,45 +44,45 @@ export default function RoomDetails() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <LoadingSpinner className="h-12 w-12 text-blue-600" />
+        <LoadingSpinner className="h-12 w-12 text-[var(--primary)]" />
       </div>
     )
   }
 
   if (!room) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-red-600">
+      <div className="min-h-screen flex items-center justify-center text-[var(--error)]">
         Room not found
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-[var(--background)] py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Breadcrumb Navigation */}
         <nav className="flex mb-8" aria-label="Breadcrumb">
           <ol className="flex items-center space-x-2">
             <li>
-              <Link href="/rooms" className="text-gray-500 hover:text-gray-700">
+              <Link href="/rooms" className="text-[var(--muted)] hover:text-[var(--foreground)]">
                 Rooms
               </Link>
             </li>
             <li>
-              <span className="text-gray-400 mx-2">/</span>
+              <span className="text-[var(--muted)] mx-2">/</span>
             </li>
-            <li className="text-blue-600 font-medium" aria-current="page">
+            <li className="text-[var(--primary)] font-medium" aria-current="page">
               {room.roomName}
             </li>
           </ol>
         </nav>
 
         {/* Room Header */}
-        <div className="bg-white rounded-xl shadow-md p-6 mb-8">
+        <div className="hover-card p-6 mb-8">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">{room.roomName}</h1>
-              <div className="flex items-center space-x-4 text-gray-600">
+              <h1 className="text-3xl font-bold text-[var(--foreground)] mb-2">{room.roomName}</h1>
+              <div className="flex items-center space-x-4 text-[var(--muted)]">
                 <span className="inline-flex items-center">
                   <BuildingOfficeIcon className="h-5 w-5 mr-2" />
                   {building?.floors ? `Floor ${building.floors}` : 'Building Info'}
@@ -91,14 +91,14 @@ export default function RoomDetails() {
                   <UserGroupIcon className="h-5 w-5 mr-2" />
                   {room.capacity} people
                 </span>
-                <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
+                <span className="room-feature-badge">
                   {room.type}
                 </span>
               </div>
             </div>
             <Link
               href={`/bookings/room/${room.roomId}`}
-              className="mt-4 md:mt-0 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center"
+              className="btn-primary mt-4 md:mt-0 flex items-center"
             >
               <CalendarIcon className="h-5 w-5 mr-2" />
               Book This Room
@@ -111,18 +111,18 @@ export default function RoomDetails() {
           {/* Left Column - Details */}
           <div className="lg:col-span-2 space-y-6">
             {/* Room Schedule */}
-            <div className="bg-white rounded-xl shadow-md p-6">
+            <div className="hover-card p-6">
               <h2 className="text-xl font-semibold mb-4 flex items-center">
-                <ClockIcon className="h-6 w-6 mr-2 text-blue-600" />
+                <ClockIcon className="h-6 w-6 mr-2 text-[var(--primary)]" />
                 Booking Schedule
               </h2>
               <BookingTimeline bookings={bookings} />
             </div>
 
             {/* Room Description */}
-            <div className="bg-white rounded-xl shadow-md p-6">
+            <div className="hover-card p-6">
               <h2 className="text-xl font-semibold mb-4">About This Space</h2>
-              <p className="text-gray-600 leading-relaxed">
+              <p className="text-[var(--muted)] leading-relaxed">
                 {room.description || 'This modern space offers excellent facilities for meetings, workshops, and collaborative work. Equipped with state-of-the-art technology and comfortable seating.'}
               </p>
             </div>
@@ -132,17 +132,17 @@ export default function RoomDetails() {
           <div className="space-y-6">
             {/* Building Card */}
             {building && (
-              <div className="bg-white rounded-xl shadow-md p-6">
+              <div className="hover-card p-6">
                 <h3 className="text-lg font-semibold mb-4 flex items-center">
-                  <MapPinIcon className="h-5 w-5 mr-2 text-blue-600" />
+                  <MapPinIcon className="h-5 w-5 mr-2 text-[var(--primary)]" />
                   Building Details
                 </h3>
                 <div className="space-y-2">
-                  <p className="text-gray-600">Building ID: {building.buildingId}</p>
-                  <p className="text-gray-600">Floors: {building.floors || 'N/A'}</p>
+                  <p className="text-[var(--muted)]">Building ID: {building.buildingId}</p>
+                  <p className="text-[var(--muted)]">Floors: {building.floors || 'N/A'}</p>
                   <Link
                     href={`/buildings/${building.buildingId}`}
-                    className="inline-flex items-center text-blue-600 hover:text-blue-700 mt-2"
+                    className="inline-flex items-center text-[var(--primary)] hover:text-[var(--primary-hover)] mt-2"
                   >
                     View Building
                     <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -154,16 +154,16 @@ export default function RoomDetails() {
             )}
 
             {/* Upcoming Bookings */}
-            <div className="bg-white rounded-xl shadow-md p-6">
+            <div className="hover-card p-6">
               <h3 className="text-lg font-semibold mb-4 flex items-center">
-                <CalendarIcon className="h-5 w-5 mr-2 text-blue-600" />
+                <CalendarIcon className="h-5 w-5 mr-2 text-[var(--primary)]" />
                 Next Events
               </h3>
               <div className="space-y-4">
                 {bookings.slice(0, 3).map(booking => (
-                  <div key={booking.requestId} className="border-l-4 border-blue-600 pl-4">
-                    <p className="text-sm font-medium text-gray-900">{booking.description}</p>
-                    <p className="text-xs text-gray-500 mt-1">
+                  <div key={booking.requestId} className="gradient-border-left pl-4">
+                    <p className="text-sm font-medium text-[var(--foreground)]">{booking.description}</p>
+                    <p className="text-xs text-[var(--muted)] mt-1">
                       {new Date(booking.startDate).toLocaleDateString()} •{' '}
                       {new Date(booking.startDate).toLocaleTimeString()} –{' '}
                       {new Date(booking.endDate).toLocaleTimeString()}
@@ -171,7 +171,7 @@ export default function RoomDetails() {
                   </div>
                 ))}
                 {bookings.length === 0 && (
-                  <p className="text-gray-500 text-sm">No upcoming bookings</p>
+                  <p className="text-[var(--muted)] text-sm">No upcoming bookings</p>
                 )}
               </div>
             </div>

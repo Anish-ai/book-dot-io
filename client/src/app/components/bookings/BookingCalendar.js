@@ -12,11 +12,11 @@ export default function BookingCalendar({ bookings }) {
   }, {})
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-7 gap-4">
+    <div className="calendar-grid">
       {Object.entries(groupByDate).map(([date, dailyBookings]) => (
         <div 
           key={date}
-          className="bg-gray-50 p-4 rounded-lg border border-gray-200"
+          className="bg-[var(--card-hover)] p-4 rounded-lg border border-[var(--border)]"
         >
           <div className="text-sm font-semibold mb-2">
             {format(parseISO(date), 'MMM dd')}
@@ -25,7 +25,7 @@ export default function BookingCalendar({ bookings }) {
             {dailyBookings.map(booking => (
               <div 
                 key={booking.requestId}
-                className="p-2 bg-blue-100 rounded text-sm text-blue-800"
+                className="p-2 bg-[var(--primary-hover)/10] rounded text-sm text-[var(--primary)]"
               >
                 <div className="font-medium">
                   {format(parseISO(booking.startDate), 'HH:mm')} - {' '}

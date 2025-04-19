@@ -36,7 +36,7 @@ export default function BookingDetail() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <LoadingSpinner className="h-12 w-12 text-blue-600" />
+        <LoadingSpinner className="h-12 w-12 text-[var(--primary)]" />
       </div>
     )
   }
@@ -44,9 +44,9 @@ export default function BookingDetail() {
   if (error) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="max-w-md p-6 bg-red-50 rounded-xl text-center">
-          <h2 className="text-xl font-semibold text-red-600 mb-4">{error}</h2>
-          <Link href="/bookings" className="text-blue-600 hover:text-blue-700 font-medium">
+        <div className="max-w-md p-6 bg-[var(--error-bg)] rounded-xl text-center">
+          <h2 className="text-xl font-semibold text-[var(--error)] mb-4">{error}</h2>
+          <Link href="/bookings" className="text-[var(--primary)] hover:text-[var(--primary-hover)] font-medium">
             ← Back to Bookings
           </Link>
         </div>
@@ -55,10 +55,10 @@ export default function BookingDetail() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-[var(--background)] py-8">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-6">
-          <Link href="/bookings" className="text-blue-600 hover:text-blue-700 font-medium inline-flex items-center">
+          <Link href="/bookings" className="text-[var(--primary)] hover:text-[var(--primary-hover)] font-medium inline-flex items-center">
             <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
             </svg>
@@ -66,17 +66,17 @@ export default function BookingDetail() {
           </Link>
         </div>
 
-        <div className="bg-white rounded-xl shadow-md overflow-hidden">
+        <div className="booking-detail-card">
           {/* Header Section */}
-          <div className="p-6 border-b border-gray-200">
+          <div className="booking-detail-section">
             <div className="flex justify-between items-start">
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">{booking.description || 'Untitled Booking'}</h1>
+                <h1 className="text-2xl font-bold text-[var(--foreground)]">{booking.description || 'Untitled Booking'}</h1>
                 <div className="mt-2 flex items-center space-x-4">
                   <span className={`status-badge status-${booking.status.toLowerCase()}`}>
                     {booking.status}
                   </span>
-                  <span className="flex items-center text-gray-600">
+                  <span className="flex items-center text-[var(--muted)]">
                     <TagIcon className="h-5 w-5 mr-1" />
                     {booking.category}
                   </span>
@@ -85,7 +85,7 @@ export default function BookingDetail() {
               {booking.status === 'PENDING' && (
                 <Link 
                   href={`/bookings/${id}/edit`}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                  className="btn-primary"
                 >
                   Edit Request
                 </Link>
@@ -98,13 +98,13 @@ export default function BookingDetail() {
             {/* Booking Details */}
             <div className="space-y-6">
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-900">Booking Information</h3>
+                <h3 className="text-lg font-semibold text-[var(--foreground)]">Booking Information</h3>
                 
                 <div className="flex items-start">
-                  <CalendarIcon className="h-6 w-6 text-gray-500 mr-3 mt-1" />
+                  <CalendarIcon className="h-6 w-6 text-[var(--muted)] mr-3 mt-1" />
                   <div>
-                    <p className="font-medium text-gray-900">Dates</p>
-                    <p className="text-gray-600">
+                    <p className="font-medium text-[var(--foreground)]">Dates</p>
+                    <p className="text-[var(--muted)]">
                       {new Date(booking.startDate).toLocaleDateString()} - {' '}
                       {new Date(booking.endDate).toLocaleDateString()}
                     </p>
@@ -112,10 +112,10 @@ export default function BookingDetail() {
                 </div>
 
                 <div className="flex items-start">
-                  <ClockIcon className="h-6 w-6 text-gray-500 mr-3 mt-1" />
+                  <ClockIcon className="h-6 w-6 text-[var(--muted)] mr-3 mt-1" />
                   <div>
-                    <p className="font-medium text-gray-900">Time Range</p>
-                    <p className="text-gray-600">
+                    <p className="font-medium text-[var(--foreground)]">Time Range</p>
+                    <p className="text-[var(--muted)]">
                       {new Date(booking.startDate).toLocaleTimeString()} - {' '}
                       {new Date(booking.endDate).toLocaleTimeString()}
                     </p>
@@ -123,43 +123,43 @@ export default function BookingDetail() {
                 </div>
 
                 <div className="flex items-start">
-                  <MapPinIcon className="h-6 w-6 text-gray-500 mr-3 mt-1" />
+                  <MapPinIcon className="h-6 w-6 text-[var(--muted)] mr-3 mt-1" />
                   <div>
-                    <p className="font-medium text-gray-900">Location</p>
-                    <p className="text-gray-600">
+                    <p className="font-medium text-[var(--foreground)]">Location</p>
+                    <p className="text-[var(--muted)]">
                       Room {booking.room?.roomName} (Capacity: {booking.room?.capacity})
                     </p>
-                    <p className="text-sm text-gray-500">Building {booking.room?.buildingId}</p>
+                    <p className="text-sm text-[var(--muted)]">Building {booking.room?.buildingId}</p>
                   </div>
                 </div>
               </div>
 
               {booking.description && (
                 <div className="space-y-4">
-                  <h3 className="text-lg font-semibold text-gray-900">Description</h3>
-                  <p className="text-gray-600 whitespace-pre-line">{booking.description}</p>
+                  <h3 className="text-lg font-semibold text-[var(--foreground)]">Description</h3>
+                  <p className="text-[var(--muted)] whitespace-pre-line">{booking.description}</p>
                 </div>
               )}
             </div>
 
             {/* Schedule Section */}
             <div className="space-y-6">
-              <h3 className="text-lg font-semibold text-gray-900">Scheduled Sessions</h3>
+              <h3 className="text-lg font-semibold text-[var(--foreground)]">Scheduled Sessions</h3>
               <div className="space-y-4">
                 {booking.schedules?.map((schedule) => (
                   <div 
                     key={schedule.id}
-                    className="p-4 bg-gray-50 rounded-lg border border-gray-200"
+                    className="p-4 bg-[var(--card-hover)] rounded-lg border border-[var(--border)]"
                   >
                     <div className="flex justify-between items-center">
                       <div>
-                        <p className="font-medium text-gray-900">{schedule.day}</p>
-                        <p className="text-sm text-gray-600">
+                        <p className="font-medium text-[var(--foreground)]">{schedule.day}</p>
+                        <p className="text-sm text-[var(--muted)]">
                           {new Date(schedule.startTime).toLocaleTimeString()} - {' '}
                           {new Date(schedule.endTime).toLocaleTimeString()}
                         </p>
                       </div>
-                      <span className="text-sm text-gray-500">
+                      <span className="text-sm text-[var(--muted)]">
                         Room {schedule.roomId}
                       </span>
                     </div>

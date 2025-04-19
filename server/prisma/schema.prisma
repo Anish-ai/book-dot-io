@@ -80,7 +80,6 @@ model Room {
 model Booking {
   requestId   Int             @id
   category    BookingCategory
-  roomId      Int
   userId      Int
   status      String
   startDate   DateTime
