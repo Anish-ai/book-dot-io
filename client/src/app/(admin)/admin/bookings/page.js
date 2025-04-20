@@ -160,7 +160,7 @@ export default function AdminBookingsPage() {
           <div className="relative flex-1">
             <input
               type="text"
-              placeholder="Search by description or user email..."
+              placeholder="     Search by description or user email..."
               className="w-full pl-10 pr-4 py-3 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-light)] focus:border-[var(--primary)] bg-[var(--background)]"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}

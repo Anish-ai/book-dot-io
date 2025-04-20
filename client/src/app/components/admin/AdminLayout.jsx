@@ -120,15 +120,6 @@ export default function AdminLayout({ children, title }) {
             
             <div className="flex items-center gap-4">
               <ThemeToggle />
-              <div className="hidden md:block">
-                <button 
-                  onClick={handleLogout}
-                  className="flex items-center gap-2 text-[var(--error)] hover:text-[var(--error-dark)] transition-colors"
-                >
-                  <ArrowLeftOnRectangleIcon className="h-5 w-5" />
-                  <span className="hidden sm:inline">Log Out</span>
-                </button>
-              </div>
             </div>
           </div>
         </header>

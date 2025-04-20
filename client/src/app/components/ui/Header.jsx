@@ -113,12 +113,6 @@ export function Header() {
                 >
                   Sign In
                 </Link>
-                <Link
-                  href="/auth/register"
-                  className="btn-primary"
-                >
-                  Register
-                </Link>
               </div>
             )}
             

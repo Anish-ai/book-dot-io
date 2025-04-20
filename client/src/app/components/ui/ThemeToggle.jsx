@@ -8,16 +8,16 @@ export function ThemeToggle() {
 
   return (
     <button
-      onClick={toggleTheme}
-      className="p-2 rounded-lg bg-[var(--card)] hover:bg-[var(--card-hover)] 
-                 transition-all duration-200 border border-[var(--border)]"
-      aria-label="Toggle theme"
+      // onClick={toggleTheme}
+      // className="p-2 rounded-lg bg-[var(--card)] hover:bg-[var(--card-hover)] 
+      //            transition-all duration-200 border border-[var(--border)]"
+      // aria-label="Toggle theme"
     >
-      {theme === 'dark' ? (
+      {/* {theme === 'dark' ? (
         <SunIcon className="w-5 h-5 text-[var(--warning)]" />
       ) : (
-        <MoonIcon className="w-5 h-5 text-[var(--muted)]" />
-      )}
+<SunIcon className="w-5 h-5 text-[var(--warning)]" />
+      )} */}
     </button>
   );
 } 

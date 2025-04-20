@@ -102,7 +102,7 @@ export default function LoginPage() {
                     Email Address
                   </label>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                       <EnvelopeIcon className="h-5 w-5 text-[var(--muted)]" />
                     </div>
                     <input
@@ -110,8 +110,8 @@ export default function LoginPage() {
                       id="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="w-full pl-10 pr-4 py-3 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-light)] focus:border-[var(--primary)] bg-[var(--background)]"
-                      placeholder="Enter your email"
+                      className="w-full pl-12 pr-4 py-3 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-light)] focus:border-[var(--primary)] bg-[var(--background)]"
+                      placeholder="     Enter your email"
                       required
                     />
                   </div>
@@ -130,7 +130,7 @@ export default function LoginPage() {
                     </a>
                   </div>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                       <LockClosedIcon className="h-5 w-5 text-[var(--muted)]" />
                     </div>
                     <input
@@ -138,8 +138,8 @@ export default function LoginPage() {
                       id="password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="w-full pl-10 pr-4 py-3 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-light)] focus:border-[var(--primary)] bg-[var(--background)]"
-                      placeholder="Enter your password"
+                      className="w-full pl-12 pr-4 py-3 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-light)] focus:border-[var(--primary)] bg-[var(--background)]"
+                      placeholder="     Enter your password"
                       required
                     />
                   </div>

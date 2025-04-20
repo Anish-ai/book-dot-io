@@ -106,12 +106,6 @@ export default function HomePage() {
                 >
                   Sign In
                 </Link>
-                <Link 
-                  href="/auth/register" 
-                  className="border-2 border-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-[var(--primary)] transition-all flex items-center justify-center"
-                >
-                  Register
-                </Link>
               </div>
             )}
           </div>
